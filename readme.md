@@ -17,7 +17,7 @@ This is a diagram of how I utilize / Integrate the ML and LLM models in my proje
 ![assets/Diagram1.1.gif](assets/Diagram1.1.gif)
 
 
-## Step by Step to Deploy a Model that uses Hugging Face Pipeline with Baseten
+## Step by Step to Deploy a Model on Baseten:
 
 What is Baseten, and Why Should You Use It?
 
@@ -54,6 +54,7 @@ Given the nightmarish complexity of the task, here's a concise list of considera
     - Model Docker Container Management
 
 
+---
 
 ### Part 1: Model Skeleton
 
@@ -79,17 +80,19 @@ curl -X POST https://model-FINDINTERMINAL_OR_DASHBOARD.api.baseten.co/developmen
 7. output:
 
 ```json
+
 {"diarization_result": {"segments": [{"speaker": "SPEAKER_03", "start": 0.008488964346349746, "end": 9.601018675721562}, {"speaker": "SPEAKER_02", "start": 8.98981324278438, "end": 16.79966044142615}, {"speaker": "SPEAKER_00", "start": 16.79966044142615, "end": 21.298811544991516}, {"speaker": "SPEAKER_01", "start": 21.298811544991516, "end": 23.879456706281836}, {"speaker": "SPEAKER_02", "start": 24.67741935483871, "end": 30.653650254668932}]}}%
+
 ```
 
 
-----
+---
 
 ### Part 2: Model Exploration
 
 This is the model that I would like to deploy on Baseten, it is a Speaker Diarization model that uses the HuggingFace pipeline (pyannote library).
 
-- [Link](https://huggingface.co/pyannote/speaker-diarization-3.1)
+- [pyannote/speaker-diarization-3.1](https://huggingface.co/pyannote/speaker-diarization-3.1)
 
 - In another example, that will be posted later, we have transcribed the audio file to text, and then we will use the speaker diarization model to identify the speakers in the audio file.
 - speaker diarization is a the task of determining "who spoke when" in an audio file.
@@ -147,7 +150,7 @@ SPEAKER New_Podcast_Coming_Soon_Blowback.mp3 1 24.694 5.976 <NA> <NA> SPEAKER_02
 
 Before we do the integration, I did some exploration for existing examples on truss-examples repo, and I found a similar example that uses the HuggingFace pipeline and also uses the Baseten tempfile library, which somewhat functions similar to Google Colab's tempfile library, or any other temporary file library for Linux.
 
-- [Solid Resources Truss Examples](https://github.com/basetenlabs/truss-examples)
+- [^Solid Resources, Truss Examples](https://github.com/basetenlabs/truss-examples)
 
 1. Since we already have a skeleton model from the first step, we will now integrate the HuggingFace pipeline with the Baseten model.
    1. First, import the necessary libraries as follows:
@@ -249,7 +252,8 @@ system_packages:
 
 ---
 
-Part 4: Debugging and Testing the Model.
+
+### Part 4: Debugging and Testing the Model.
 
 - At first, I kept getting a system error, and I realized that I forgot to include the `ffmpeg` system package in the `config.yml` file.
 - Then I encountered an error with the `tempfile` library, and I realized that filename needs to be sanitized before using it in the RTTM file.
