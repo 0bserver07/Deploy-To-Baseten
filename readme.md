@@ -1,20 +1,59 @@
 
 ## Welcome To My Baseten Projects
 
-This repo contains ML and LLM Models used to for my personal projects that deployed on Baseten.
+This repo contain some examples for Machine Learning models and Large Language Models used for my personal projects that are deployed on Baseten.
 
-Currently, I have 2 projects that are deployed on Baseten:
-- Custome WhisperV3 Model.
-- Custome Speaker Diarization Model.
+Currently, I have two models that are deployed on Baseten:
+1. Custom WhisperV3 Model.
+2. Custom Speaker Diarization Model.
 
-- This is a diagram of how I utilize the models in my projects.
 
-- Below you will find step by step to deploy a model that Baseten Truss library to deploy a HuggingFace Pipeline on Baseten through the CLI.
+Below, you will find a step-by-step guide on how to use the Baseten Truss library to deploy a HuggingFace Pipeline on Baseten through the CLI.
+
+
+This is a diagram of how I utilize / Integrate the ML and LLM models in my projects.
+
 
 ![assets/Diagram1.1.gif](assets/Diagram1.1.gif)
 
 
 ## Step by Step to Deploy a Model that uses Hugging Face Pipeline with Baseten
+
+What is Baseten, and Why Should You Use It?
+
+Baseten offers a platform that simplifies all the steps needed to deploy a model into production and more. This includes a CLI tool called Truss, which creates a standardized model skeleton. This skeleton includes all the necessary files and directories needed to deploy a model on Baseten. The Truss CLI also allows you to deploy the model with a single command, and it handles all the necessary steps to deploy the model into production.
+
+
+If you have ever tried to deploy a machine learning model to production manually on your own AWS/GCP servers, as you read this you might be having flashbacks of horror.
+Given the nightmarish complexity of the task, here's a concise list of considerations for deploying a model into production:
+
+  - Monitoring Model Performance
+    - Scaling Model Resources (CPU, Memory, GPU)
+    - Model Logs and Metrics
+  - Managing Model Dependencies
+    - Model System Packages (ffmpeg, etc.)
+    - Model Python Libraries (torch, transformers, etc.)
+  - Managing Model Deployment
+    - Model Testing (Unit Tests, Integration Tests)
+    - Model Rollbacks (Versioning)
+    - Model Updates (Hotfixes, New Features)
+    - Model Versions (A/B Testing / DEV, STAGING, PROD)
+  - Managing Model Security:
+    - Model Secrets (API Keys, Tokens)
+    - Model Configurations (Environment Variables)
+    - Model Permissions (Who can access the model)
+    - Model Access (API Keys, Tokens)
+  - CI/CD Pipelines
+    - Model Training
+    - Model Testing
+    - Model Deployment
+    - Model Monitoring
+  - Dockerizing the Model
+    - Model Dockerfile
+    - Model Docker Image Versioning
+    - Model Docker Container Management
+
+
 
 ### Part 1: Model Skeleton
 
@@ -27,14 +66,14 @@ Currently, I have 2 projects that are deployed on Baseten:
 
 We will do the integration of the HuggingFace pipeline in the next steps, then after that, we will deploy the model on Baseten, and finally, we will test the model.
 
-1. Since we are including a secret token in the config.yml for the model, we will use:
+5. Since we are including a secret token in the config.yml for the model, we will use:
 - ```truss push --trusted```
-1. we intitally do a curl to test the model:
+6. After deploying the model, we initially use a curl command to test it:
 
 ```bash
 curl -X POST https://model-FINDINTERMINAL_OR_DASHBOARD.api.baseten.co/development/predict \
   -H 'Authorization: Api-Key GENERATE_IN_WEB_UI' \
-  -d '{"url": "DIRECT_LINKTO_AUIDO_FILE.mp3"}
+  -d '{"url": "DIRECT_LINKTO_SMALL_AUIDO_FILE.mp3"}
 ```
 
 7. output:
@@ -51,6 +90,10 @@ curl -X POST https://model-FINDINTERMINAL_OR_DASHBOARD.api.baseten.co/developmen
 This is the model that I would like to deploy on Baseten, it is a Speaker Diarization model that uses the HuggingFace pipeline (pyannote library).
 
 - [Link](https://huggingface.co/pyannote/speaker-diarization-3.1)
+
+- In another example, that will be posted later, we have transcribed the audio file to text, and then we will use the speaker diarization model to identify the speakers in the audio file.
+- speaker diarization is a the task of determining "who spoke when" in an audio file.
+
 
 - It requires the end-user to sign a few agreements before using the model. Once that's done, we can test the model offline within a script, then integrate it with Baseten.
 
@@ -106,8 +149,8 @@ Before we do the integration, I did some exploration for existing examples on tr
 
 - [Solid Resources Truss Examples](https://github.com/basetenlabs/truss-examples)
 
-1. Since we already have a sekeleton model from first step, now we will integrate the HuggingFace pipeline with the Baseten model.
-   1. imports:
+1. Since we already have a skeleton model from the first step, we will now integrate the HuggingFace pipeline with the Baseten model.
+   1. First, import the necessary libraries as follows:
    ```python
     import os
     import tempfile
@@ -210,7 +253,7 @@ Part 4: Debugging and Testing the Model.
 
 - At first, I kept getting a system error, and I realized that I forgot to include the `ffmpeg` system package in the `config.yml` file.
 - Then I encountered an error with the `tempfile` library, and I realized that filename needs to be sanitized before using it in the RTTM file.
-- Then I started getting timeout error, which I wasn't sure what might be causing this issue, since there were no Errors per se, other than the model was taking too long to process the audio file, so I had to increase server size to 8Gb from 2Gb.
+- Then, I started encountering timeout errors. It was unclear what was causing these issues, as there were no explicit errors. The model simply took too long to process the audio file. To resolve this, I increased the server size from 2GB to 8GB.
 ![expected_output](assets/metrics_dashboard.png)
 
 - Then it all worked out, and I got the expected output from the model.
