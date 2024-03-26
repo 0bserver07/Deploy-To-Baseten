@@ -1,0 +1,19 @@
+environment_variables: {}
+model_name: diarization-model  # Customized to your model's purpose
+python_version: py39  # Updated to Python 3.9 as per your new snippet
+requirements:
+  - torch==2.0.1
+  - transformers==4.30.2  # Ensure compatibility with your model dependencies
+  - pyannote.audio  # Essential for your diarization model
+  - huggingface_hub  # For HuggingFace model access
+  - ffmpeg-python==0.2.0  # For audio processing
+  # Add any other libraries your model specifically requires
+resources:
+  cpu: "1"
+  memory: 2Gi
+  use_gpu: false  # Set to true if your model significantly benefits from GPU acceleration
+  accelerator: null  # Specify an accelerator if using GPU
+secrets:
+  hf_access_token: hf_TOKEN_HERE_FROM_HUGGINGFACE_API  # Ensure this is correctly set in Baseten's secrets manager
+system_packages:
+  - ffmpeg  # ffmpeg is commonly needed for audio file processing
